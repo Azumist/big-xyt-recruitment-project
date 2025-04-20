@@ -1,0 +1,7 @@
+<div class="controls">
+  <button (click)="startAnimation()" [disabled]="isAnimating">Replay</button>
+  <button (click)="stopAnimation()" [disabled]="!isAnimating">Stop</button>
+  <input type="range" min="0" [max]="dataPoints.length - 1" [(ngModel)]="currentIndex" (input)="onSliderChange()">
+  <span>{{ currentTime }}</span>
+</div>
+<div #chartContainer class="chart-container"></div>
