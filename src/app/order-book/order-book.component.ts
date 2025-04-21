@@ -4,10 +4,12 @@ import { FormsModule } from '@angular/forms';
 import * as d3 from 'd3';
 import { OrderBookData } from '@interfaces/order-book-data.interface';
 import { OrderEntry } from '@interfaces/order-entry.interface';
+import { MatSliderModule } from '@angular/material/slider';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-order-book',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MatSliderModule, MatButtonModule],
   templateUrl: './order-book.component.html',
   styleUrl: './order-book.component.css'
 })
@@ -23,7 +25,7 @@ export class OrderBookComponent implements OnInit, OnChanges {
 
   private orderCountPerFrame = 10;
   private svgMargin = { top: 20, right: 30, bottom: 40, left: 80 };
-  private svgfontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif';
+  private svgFontFamily = 'Roboto, "Helvetica Neue", sans-serif';
   private svgFontWeight = 'lighter';
   private svgAxisTickFontSize = '12px';
   private svgSizeLabelsFontSize = '12px';
@@ -122,7 +124,7 @@ export class OrderBookComponent implements OnInit, OnChanges {
         .attr('class', 'x-label')
         .attr('text-anchor', 'middle')
         .attr('font-weight', this.svgFontWeight)
-        .attr('font-family', this.svgfontFamily)
+        .attr('font-family', this.svgFontFamily)
         .attr('x', this.width / 2)
         .attr('y', this.height + this.svgMargin.bottom - 5)
         .text('Size');
@@ -131,7 +133,7 @@ export class OrderBookComponent implements OnInit, OnChanges {
         .attr('class', 'y-label')
         .attr('text-anchor', 'middle')
         .attr('font-weight', this.svgFontWeight)
-        .attr('font-family', this.svgfontFamily)
+        .attr('font-family', this.svgFontFamily)
         .attr('transform', `rotate(-90)`)
         .attr('x', -this.height / 2)
         .attr('y', -(this.width / 18))
@@ -141,20 +143,18 @@ export class OrderBookComponent implements OnInit, OnChanges {
         .attr('class', 'top-label')
         .attr('text-anchor', 'middle')
         .attr('font-weight', this.svgFontWeight)
-        .attr('font-family', this.svgfontFamily)
+        .attr('font-family', this.svgFontFamily)
         .attr('x', this.width / 4)
         .attr('y', -5)
-        .style('font-weight', 'bold')
         .text('Bids');
 
       this.svg.append('text')
         .attr('class', 'top-label')
         .attr('text-anchor', 'middle')
         .attr('font-weight', this.svgFontWeight)
-        .attr('font-family', this.svgfontFamily)
+        .attr('font-family', this.svgFontFamily)
         .attr('x', this.width - (this.width / 4))
         .attr('y', -5)
-        .style('font-weight', 'bold')
         .text('Asks');
     }
   }
@@ -194,7 +194,7 @@ export class OrderBookComponent implements OnInit, OnChanges {
           return orderEntry ? orderEntry.price.toFixed(4) : '';
         }))
         .selectAll('text')
-        .attr('font-family', this.svgfontFamily)
+        .attr('font-family', this.svgFontFamily)
         .attr('font-weight', this.svgFontWeight)
         .attr('font-size', this.svgAxisTickFontSize);
       
@@ -202,7 +202,7 @@ export class OrderBookComponent implements OnInit, OnChanges {
       this.svg.select('.x-axis')
         .call(d3.axisBottom(this.xScale).tickFormat((d) => Math.abs(d as number).toString()))
         .selectAll('text')
-        .attr('font-family', this.svgfontFamily)
+        .attr('font-family', this.svgFontFamily)
         .attr('font-weight', this.svgFontWeight)
         .attr('font-size', this.svgAxisTickFontSize);
       
@@ -268,7 +268,7 @@ export class OrderBookComponent implements OnInit, OnChanges {
         .attr('fill', 'black')
         .attr('font-size', this.svgSizeLabelsFontSize)
         .attr('font-weight', this.svgFontWeight)
-        .attr('font-family', this.svgfontFamily)
+        .attr('font-family', this.svgFontFamily)
         .attr('x', (d: OrderEntry) => (this.width / 2) + this.svgBarLabelCenterOffset * (d.type === 'bid' ? -1 : 1))
         .attr('y', (d: OrderEntry) => this.yScale(`${d.type}-${d.level}`) + this.yScale.bandwidth() / 2)
         .text((d: OrderEntry) => sizeLabelFormatter(d.size));

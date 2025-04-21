@@ -3,6 +3,10 @@
   <ng-container *ngIf="!isLoading">
     <app-order-book [rawData]="orderBookData"></app-order-book>
   </ng-container>
-  <div class="loading" *ngIf="isLoading">Please wait...</div>
-  <div class="loading" *ngIf="isError">Failed to fetch the data. Check your internet connection.</div>
+  <div class="loading" *ngIf="isLoading">
+    <mat-spinner></mat-spinner>
+  </div>
+  <div class="loading" *ngIf="isError">
+    Failed to fetch the data. Check your internet connection.
+  </div>
 </div>

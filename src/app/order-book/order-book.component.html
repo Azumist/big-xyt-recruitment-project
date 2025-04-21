@@ -1,7 +1,9 @@
 <div class="controls">
-  <button (click)="startAnimation()" [disabled]="isAnimating">Replay</button>
-  <button (click)="stopAnimation()" [disabled]="!isAnimating">Stop</button>
-  <input type="range" min="0" [max]="dataPoints.length - 1" [(ngModel)]="currentIndex" (input)="onSliderChange()">
+  <button mat-button (click)="startAnimation()" [disabled]="isAnimating">Replay</button>
+  <button mat-button (click)="stopAnimation()" [disabled]="!isAnimating">Stop</button>
+  <mat-slider min="0" [max]="dataPoints.length - 1" (input)="onSliderChange()" step="1" style="width: 100%;">
+    <input matSliderThumb [(ngModel)]="currentIndex" #slider>
+  </mat-slider>
   <span>{{ currentTime }}</span>
 </div>
 <div #chartContainer class="chart-container"></div>
