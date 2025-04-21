@@ -15,10 +15,12 @@ export class AppComponent {
   isError = false;
   isLoading = true;
 
+  private jsonUrl = `${window.location.origin}/sample.json`;
+
   constructor(private http: HttpClient) {}
 
   ngOnInit() {
-    this.http.get('http://localhost:4200/sample.json').subscribe({
+    this.http.get(this.jsonUrl).subscribe({
       next: (res) => {
         this.isLoading = false;
         this.orderBookData = res as any;
