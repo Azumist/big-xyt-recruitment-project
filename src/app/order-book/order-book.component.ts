@@ -22,14 +22,14 @@ export class OrderBookComponent implements OnInit, OnChanges {
   isAnimating = false;
 
   private orderCountPerFrame = 10;
-  private margin = { top: 20, right: 30, bottom: 40, left: 80 };
-  private fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif';
-  private fontWeight = 'lighter';
-  private axisTickFontSize = '12px';
-  private sizeLabelsFontSize = '12px';
-  private barLabelCenterOffset = 10;
-  private bidColor = '#83b27d';
-  private askColor = '#c76e5b';
+  private svgMargin = { top: 20, right: 30, bottom: 40, left: 80 };
+  private svgfontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif';
+  private svgFontWeight = 'lighter';
+  private svgAxisTickFontSize = '12px';
+  private svgSizeLabelsFontSize = '12px';
+  private svgBarLabelCenterOffset = 10;
+  private svgBidColor = '#83b27d';
+  private svgAskColor = '#c76e5b';
   
   private animationInterval: number | undefined;
   private width = 0;
@@ -53,7 +53,6 @@ export class OrderBookComponent implements OnInit, OnChanges {
   }
   
   processData(): void {
-    console.log(this.rawData);
     this.dataPoints = this.rawData.map(entry => {
       const orders: OrderEntry[] = [];
       for (let i = 1; i <= this.orderCountPerFrame; i++) {
@@ -85,8 +84,8 @@ export class OrderBookComponent implements OnInit, OnChanges {
   
   initChart(): void {
     const element = this.chartContainer.nativeElement;
-    this.width = element.clientWidth - this.margin.left - this.margin.right;
-    this.height = element.clientHeight - this.margin.top - this.margin.bottom;
+    this.width = element.clientWidth - this.svgMargin.left - this.svgMargin.right;
+    this.height = element.clientHeight - this.svgMargin.top - this.svgMargin.bottom;
 
     d3.select(element).select('svg').remove();
     
@@ -95,11 +94,11 @@ export class OrderBookComponent implements OnInit, OnChanges {
         .attr('width', element.clientWidth)
         .attr('height', element.clientHeight)
       .append('g')
-        .attr('transform', `translate(${this.margin.left},${this.margin.top})`);
+        .attr('transform', `translate(${this.svgMargin.left},${this.svgMargin.top})`);
     
     this.xScale = d3.scaleLinear().range([0, this.width]);
     this.yScale = d3.scaleBand().range([0, this.height]).padding(0.1);
-    this.colorScale = d3.scaleOrdinal().domain(['bid', 'ask']).range([this.bidColor, this.askColor]);
+    this.colorScale = d3.scaleOrdinal().domain(['bid', 'ask']).range([this.svgBidColor, this.svgAskColor]);
     
     // axes
     {
@@ -122,31 +121,41 @@ export class OrderBookComponent implements OnInit, OnChanges {
       this.svg.append('text')
         .attr('class', 'x-label')
         .attr('text-anchor', 'middle')
-        .attr('font-weight', this.fontWeight)
-        .attr('font-family', this.fontFamily)
+        .attr('font-weight', this.svgFontWeight)
+        .attr('font-family', this.svgfontFamily)
         .attr('x', this.width / 2)
-        .attr('y', this.height + this.margin.bottom - 5)
+        .attr('y', this.height + this.svgMargin.bottom - 5)
         .text('Size');
   
       this.svg.append('text')
         .attr('class', 'y-label')
         .attr('text-anchor', 'middle')
-        .attr('font-weight', this.fontWeight)
-        .attr('font-family', this.fontFamily)
+        .attr('font-weight', this.svgFontWeight)
+        .attr('font-family', this.svgfontFamily)
         .attr('transform', `rotate(-90)`)
         .attr('x', -this.height / 2)
         .attr('y', -(this.width / 18))
         .text('Price');
-        
+
       this.svg.append('text')
-        .attr('class', 'title')
+        .attr('class', 'top-label')
         .attr('text-anchor', 'middle')
-        .attr('font-weight', this.fontWeight)
-        .attr('font-family', this.fontFamily)
-        .attr('x', this.width / 2)
+        .attr('font-weight', this.svgFontWeight)
+        .attr('font-family', this.svgfontFamily)
+        .attr('x', this.width / 4)
         .attr('y', -5)
         .style('font-weight', 'bold')
-        .text('Order Book');
+        .text('Bids');
+
+      this.svg.append('text')
+        .attr('class', 'top-label')
+        .attr('text-anchor', 'middle')
+        .attr('font-weight', this.svgFontWeight)
+        .attr('font-family', this.svgfontFamily)
+        .attr('x', this.width - (this.width / 4))
+        .attr('y', -5)
+        .style('font-weight', 'bold')
+        .text('Asks');
     }
   }
   
@@ -162,7 +171,7 @@ export class OrderBookComponent implements OnInit, OnChanges {
     
     const levels = Array.from(new Set(orders.map(d => `${d.type}-${d.level}`)))
       .sort((a, b) => {
-        // split by type then sort by initial raw data push order
+        // split by type then sort by initial raw data push order (level)
         const [typeA, levelA] = a.split('-');
         const [typeB, levelB] = b.split('-');
         
@@ -185,17 +194,17 @@ export class OrderBookComponent implements OnInit, OnChanges {
           return orderEntry ? orderEntry.price.toFixed(4) : '';
         }))
         .selectAll('text')
-        .attr('font-family', this.fontFamily)
-        .attr('font-weight', this.fontWeight)
-        .attr('font-size', this.axisTickFontSize);
+        .attr('font-family', this.svgfontFamily)
+        .attr('font-weight', this.svgFontWeight)
+        .attr('font-size', this.svgAxisTickFontSize);
       
       // x
       this.svg.select('.x-axis')
         .call(d3.axisBottom(this.xScale).tickFormat((d) => Math.abs(d as number).toString()))
         .selectAll('text')
-        .attr('font-family', this.fontFamily)
-        .attr('font-weight', this.fontWeight)
-        .attr('font-size', this.axisTickFontSize);
+        .attr('font-family', this.svgfontFamily)
+        .attr('font-weight', this.svgFontWeight)
+        .attr('font-size', this.svgAxisTickFontSize);
       
       // center
       this.svg.select('.center-line')
@@ -247,7 +256,7 @@ export class OrderBookComponent implements OnInit, OnChanges {
   
       const sizeLabelFormatter = d3.format(',');
       textLabels
-        .attr('x', (d: OrderEntry) => (this.width / 2) + this.barLabelCenterOffset * (d.type === 'bid' ? -1 : 1))
+        .attr('x', (d: OrderEntry) => (this.width / 2) + this.svgBarLabelCenterOffset * (d.type === 'bid' ? -1 : 1))
         .attr('y', (d: OrderEntry) => this.yScale(`${d.type}-${d.level}`) + this.yScale.bandwidth() / 2)
         .text((d: OrderEntry) => sizeLabelFormatter(d.size));
   
@@ -257,10 +266,10 @@ export class OrderBookComponent implements OnInit, OnChanges {
         .attr('text-anchor', (d: OrderEntry) => d.type === 'bid' ? 'end' : 'start')
         .attr('dominant-baseline', 'middle')
         .attr('fill', 'black')
-        .attr('font-size', this.sizeLabelsFontSize)
-        .attr('font-weight', this.fontWeight)
-        .attr('font-family', this.fontFamily)
-        .attr('x', (d: OrderEntry) => (this.width / 2) + this.barLabelCenterOffset * (d.type === 'bid' ? -1 : 1))
+        .attr('font-size', this.svgSizeLabelsFontSize)
+        .attr('font-weight', this.svgFontWeight)
+        .attr('font-family', this.svgfontFamily)
+        .attr('x', (d: OrderEntry) => (this.width / 2) + this.svgBarLabelCenterOffset * (d.type === 'bid' ? -1 : 1))
         .attr('y', (d: OrderEntry) => this.yScale(`${d.type}-${d.level}`) + this.yScale.bandwidth() / 2)
         .text((d: OrderEntry) => sizeLabelFormatter(d.size));
     }

@@ -3,3 +3,9 @@
   margin: 0 auto;
   padding: 20px;
 }
+
+.loading {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 200px;
+}

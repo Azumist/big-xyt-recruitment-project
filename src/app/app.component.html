@@ -1,4 +1,8 @@
 <div class="container">
   <h1>Order Book Visualization</h1>
-  <app-order-book [rawData]="orderBookData"></app-order-book>
+  <ng-container *ngIf="!isLoading">
+    <app-order-book [rawData]="orderBookData"></app-order-book>
+  </ng-container>
+  <div class="loading" *ngIf="isLoading">Please wait...</div>
+  <div class="loading" *ngIf="isError">Failed to fetch the data. Check your internet connection.</div>
 </div>

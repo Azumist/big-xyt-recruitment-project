@@ -1,23 +1,31 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { OrderBookComponent } from './order-book/order-book.component';
-import { data } from './data';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-root',
-  imports: [OrderBookComponent],
+  imports: [OrderBookComponent, CommonModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
 export class AppComponent {
-  title = 'big-xyt-recruitment-project';
-
   orderBookData: any[] = [];
+  isError = false;
+  isLoading = true;
 
   constructor(private http: HttpClient) {}
 
   ngOnInit() {
-    // TODO: http service functionality for loading data from json
-    this.orderBookData = data;
+    this.http.get('http://localhost:4200/sample.json').subscribe({
+      next: (res) => {
+        this.isLoading = false;
+        this.orderBookData = res as any;
+      },
+      error: (_err) => {
+        this.isLoading = false;
+        this.isError = true;
+      }
+    });
   }
 }
